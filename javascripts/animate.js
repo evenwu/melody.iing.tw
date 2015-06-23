@@ -1,12 +1,6 @@
-var DEBUG, dance, maxWidth, xx;
-
-DEBUG = true;
+var dance, maxWidth;
 
 maxWidth = $(window).width();
-
-xx = function(x) {
-  return DEBUG && console.log(x);
-};
 
 dance = function(elment, distance) {
   return $(elment).css({
@@ -34,7 +28,6 @@ $(function() {
     dance('.color-dots', (percent - 50) * .3);
     dance('.gray-balls', (percent - 50) * -.2);
     dance('.intro-right-lines', (percent - 50) * .3);
-    dance('.intro-left-lines', (percent - 50) * -.3);
-    return dance('.gray-mountain', (percent - 50) * -.3);
+    return dance('.intro-left-lines', (percent - 50) * -.3);
   });
 });
