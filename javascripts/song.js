@@ -56,7 +56,7 @@ $(function() {
             syncWaveform(item.id, item.token, d);
             songWaveform = d;
             return waveform = new Waveform({
-              container: $('.waveform-preview').last().get(0),
+              container: $('.waveform-preview').get(0),
               innerColor: '#F0F0F0',
               data: songWaveform
             });
@@ -65,7 +65,7 @@ $(function() {
       } else {
         songWaveform = waveformStringToArray(item.waveform);
         waveform = new Waveform({
-          container: $('.waveform-preview').last().get(0),
+          container: $('.waveform-preview').get(0),
           innerColor: '#F0F0F0',
           data: songWaveform
         });

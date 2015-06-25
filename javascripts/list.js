@@ -1,59 +1,18 @@
-var $songItem, appendList, songFilter;
+var $songItem, songFilter;
 
 window.list = [];
 
-window.pageNumber = 0;
+window.pageNumber = 1;
 
-window.perPage = 100;
-
-appendList = function(page) {
-  var array, end, item, songWaveform, start, waveform, _i, _len;
-
-  start = page * window.perPage;
-  end = (page + 1) * window.perPage;
-  if (end > window.list.length) {
-    $('.list-more-song').remove();
-  }
-  array = window.list.slice(start, end);
-  for (_i = 0, _len = array.length; _i < _len; _i++) {
-    item = array[_i];
-    $('.song-list').append($songItem(item));
-    if (item.waveform === null) {
-      SC.get('/tracks/' + item.track_id, function(track) {
-        return $.getJSON('http://waveformjs.org/w?callback=?', {
-          url: track.waveform_url
-        }, function(d) {
-          var songWaveform, waveform;
-
-          syncWaveform(item.id, item.token, d);
-          songWaveform = d;
-          return waveform = new Waveform({
-            container: $('.waveform-preview').last().get(0),
-            innerColor: '#F0F0F0',
-            data: songWaveform
-          });
-        });
-      });
-    } else {
-      songWaveform = waveformStringToArray(item.waveform);
-      waveform = new Waveform({
-        container: $('.waveform-preview').last().get(0),
-        innerColor: '#F0F0F0',
-        data: songWaveform
-      });
-    }
-    createWaveform(item.id, item.track_id, songWaveform, '.song-item-' + item.id);
-  }
-  return window.pageNumber++;
-};
+window.perPage = 10;
 
 songFilter = function(filter) {
   $('.song-list').find(".song-string:not(:Contains(" + filter + "))").parents('li').hide();
   return $('.song-list').find(".song-string:contains(" + filter + ")").parents('li').show();
 };
 
-$songItem = function(item) {
-  return '<li class="song-item song-item-' + item.id + '">\
+$songItem = function(item, display) {
+  return '<li class="song-item song-item-' + item.id + display + '">\
     <div class="song-string">' + padLeft(item.id, 3) + ',' + item.id + ',' + item.title + ',' + item.desc + ',' + item.author_name + '\
     </div>\
     <div class="song-content">\
@@ -83,12 +42,68 @@ $songItem = function(item) {
 
 $(function() {
   $.getJSON('http://api.iing.tw/soundclouds.json?token=8888', function(r) {
-    xx(r);
+    var display, i, item, songWaveform, waveform, _i, _len, _ref, _results;
+
     window.list = r;
-    return appendList(0);
+    i = 0;
+    $('.song-list').addClass('loading');
+    _ref = window.list;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      if (i < window.perPage) {
+        display = ' show';
+      } else {
+        display = '';
+      }
+      $('.song-list').append($songItem(item, display));
+      if (item.waveform === null) {
+        SC.get('/tracks/' + item.track_id, function(track) {
+          return $.getJSON('http://waveformjs.org/w?callback=?', {
+            url: track.waveform_url
+          }, function(d) {
+            var songWaveform, waveform;
+
+            syncWaveform(item.id, item.token, d);
+            songWaveform = d;
+            return waveform = new Waveform({
+              container: $('.song-item-' + item.id + ' .waveform-preview').get(0),
+              innerColor: '#F0F0F0',
+              data: songWaveform
+            });
+          });
+        });
+      } else {
+        songWaveform = waveformStringToArray(item.waveform);
+        waveform = new Waveform({
+          container: $('.song-item-' + item.id + ' .waveform-preview').get(0),
+          innerColor: '#F0F0F0',
+          data: songWaveform
+        });
+      }
+      createWaveform(item.id, item.track_id, songWaveform, '.song-item-' + item.id);
+      i++;
+      if (i === window.list.length) {
+        _results.push($('.song-list').removeClass('loading'));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   });
   $('body').delegate('.list-more-song', 'click', function() {
-    return appendList(window.pageNumber);
+    var i;
+
+    i = window.pageNumber * window.perPage;
+    while (i < (window.pageNumber + 1) * window.perPage) {
+      $('.song-item:eq(' + i + ')').addClass('show');
+      i++;
+    }
+    window.pageNumber++;
+    if ($('.song-item.show').length >= window.list.length) {
+      $('.list-more-song').remove();
+    }
+    return xx($('.song-item.show').length);
   });
   return $('body').delegate('.search-string', 'keyup', function() {
     var filter;
