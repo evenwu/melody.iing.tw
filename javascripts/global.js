@@ -1,6 +1,6 @@
 var DEBUG, xx;
 
-DEBUG = true;
+DEBUG = false;
 
 xx = function(x) {
   return DEBUG && console.log(x);
