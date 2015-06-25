@@ -1,5 +1,7 @@
 var getUrlVars;
 
+window.pageName = 'song';
+
 getUrlVars = function() {
   var hash, hashes, i, vars;
 

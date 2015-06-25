@@ -8,6 +8,8 @@ soundManager = void 0;
 
 soundTrack = [];
 
+window.autoLoop = false;
+
 padLeft = function(str, length) {
   if (str.toString().length >= length) {
     return str;
@@ -31,6 +33,7 @@ createWaveform = function(id, track_id, waveform, selector) {
   return SC.get('/tracks/' + track_id, function(track) {
     var ctx, gradient, sound;
 
+    $(selector + ' .play-times').text(track.playback_count);
     soundTrack[track_id] = track;
     sound = void 0;
     waveform = new Waveform({
@@ -83,7 +86,7 @@ syncWaveform = function(id, token, data) {
 
 $(function() {
   $('body').delegate('.play-button', 'click', function() {
-    var sid, _this;
+    var playSong, sid, _this;
 
     if (soundManager !== void 0) {
       soundManager.pauseAll();
@@ -93,13 +96,24 @@ $(function() {
     _this = $(this);
     _this.addClass('loading');
     sid = _this.data('sid');
-    return soundManager.play(sid, {
-      onplay: function() {
-        _this.removeClass('loading');
-        _this.removeClass('play-button');
-        return _this.addClass('pause-button');
-      }
-    });
+    playSong = function(element, sid) {
+      return soundManager.play(sid, {
+        onplay: function() {
+          element.removeClass('loading');
+          element.removeClass('play-button');
+          return element.addClass('pause-button');
+        },
+        onfinish: function() {
+          if (window.autoLoop) {
+            return playSong(element, sid);
+          } else {
+            element.removeClass('pause-button');
+            return element.addClass('play-button');
+          }
+        }
+      });
+    };
+    return playSong(_this, sid);
   });
   $('body').delegate('.pause-button', 'click', function() {
     soundManager.pauseAll();

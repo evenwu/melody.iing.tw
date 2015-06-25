@@ -1,10 +1,12 @@
 var $songItem, songFilter;
 
+window.pageName = 'list';
+
 window.list = [];
 
 window.pageNumber = 1;
 
-window.perPage = 100;
+window.perPage = 10;
 
 songFilter = function(filter) {
   $('.song-list').find(".song-string:not(:Contains(" + filter + "))").parents('li').hide();
@@ -13,14 +15,14 @@ songFilter = function(filter) {
 
 $songItem = function(item, display) {
   return '<li class="song-item song-item-' + item.id + display + '">\
-    <div class="song-string">' + padLeft(item.id, 3) + ',' + item.id + ',' + item.title + ',' + item.desc + ',' + item.author_name + '\
+    <div class="song-string">' + padLeft(item.id, 3) + ',' + item.id + ',' + item.title.toLowerCase() + ',' + item.desc.toLowerCase() + ',' + item.author_name.toLowerCase() + '\
     </div>\
     <div class="song-content">\
       <a href="/song/' + item.id + '">\
         <div class="song-number">' + padLeft(item.id, 3) + '</div>\
         <div class="song-info">\
           <div class="song-title">' + item.title + '</div>\
-          <div class="song-artist">' + item.author_name + '</div>\
+          <div class="song-artist">' + item.author_name + '&nbsp;&nbsp;/&nbsp;&nbsp;播放次數: <span class="play-times"></span></div>\
         </div>\
       </a>\
       <!--<div class="vote-count">票數：' + item.vote_count + '</div>-->\
@@ -44,15 +46,17 @@ $(function() {
   $.getJSON('http://api.iing.tw/soundclouds.json?token=8888', function(r) {
     var display, i, item, songWaveform, waveform, _i, _len, _ref, _results;
 
+    xx(r);
     window.list = r;
-    i = 0;
+    window.loading = true;
     $('.song-list').addClass('loading');
+    i = 0;
     _ref = window.list;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       item = _ref[_i];
-      if (i < window.perPage) {
-        display = ' show';
+      if (i > window.perPage - 1) {
+        display = ' hide';
       } else {
         display = '';
       }
@@ -96,22 +100,23 @@ $(function() {
 
     i = window.pageNumber * window.perPage;
     while (i < (window.pageNumber + 1) * window.perPage) {
-      $('.song-item:eq(' + i + ')').addClass('show');
+      $('.song-item:eq(' + i + ')').removeClass('hide');
       i++;
     }
     window.pageNumber++;
-    if ($('.song-item.show').length >= window.list.length) {
-      $('.list-more-song').remove();
+    if ($('.song-item.hide').length === 0) {
+      return $('.list-more-song').remove();
     }
-    return xx($('.song-item.show').length);
   });
   return $('body').delegate('.search-string', 'keyup', function() {
     var filter;
 
     filter = $(this).val();
     if (filter) {
-      return songFilter(filter);
+      $('body').addClass('searching');
+      return songFilter(filter.toLowerCase());
     } else {
+      $('body').removeClass('searching');
       return $('.song-list li').show();
     }
   });
