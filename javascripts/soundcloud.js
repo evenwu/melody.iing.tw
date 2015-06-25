@@ -1,4 +1,4 @@
-var createWaveform, nl2br, padLeft, soundManager, soundTrack, syncWaveform, waveformStringToArray;
+var createWaveform, getUrlVars, nl2br, padLeft, soundManager, soundTrack, syncWaveform, waveformStringToArray;
 
 SC.initialize({
   client_id: 'd2f7da453051d648ae2f3e9ffbd4f69b'
@@ -13,6 +13,22 @@ window.getVars = [];
 window.autoLoop = false;
 
 window.autoPlay = false;
+
+getUrlVars = function() {
+  var hash, hashes, i, vars;
+
+  vars = [];
+  hash = void 0;
+  hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+  i = 0;
+  while (i < hashes.length) {
+    hash = hashes[i].split('=');
+    vars.push(hash[0]);
+    vars[hash[0]] = hash[1];
+    i++;
+  }
+  return vars;
+};
 
 padLeft = function(str, length) {
   if (str.toString().length >= length) {

@@ -1,22 +1,4 @@
-var getUrlVars;
-
 window.pageName = 'song';
-
-getUrlVars = function() {
-  var hash, hashes, i, vars;
-
-  vars = [];
-  hash = void 0;
-  hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-  i = 0;
-  while (i < hashes.length) {
-    hash = hashes[i].split('=');
-    vars.push(hash[0]);
-    vars[hash[0]] = hash[1];
-    i++;
-  }
-  return vars;
-};
 
 $(function() {
   var explode, id, song_no, url;
