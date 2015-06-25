@@ -19,13 +19,21 @@ getUrlVars = function() {
 };
 
 $(function() {
-  var id, song_no, url;
+  var explode, id, song_no, url;
 
-  url = window.location.href;
-  if (url.slice(-1) === '/') {
-    url = url.substring(0, url.length - 1);
+  xx(window.getVars);
+  if (parseInt(window.getVars['autoplay']) === 1) {
+    window.autoPlay = true;
   }
-  song_no = url.split("/").pop();
+  url = window.location.href;
+  if (url.indexOf('?') > 0) {
+    url = url.split('?')[0];
+  }
+  if (url.indexOf('#') > 0) {
+    url = url.split('#')[0];
+  }
+  explode = url.split('/');
+  song_no = explode[4];
   if (typeof song_no !== 'undefined' && parseInt(song_no) > 0) {
     id = parseInt(song_no);
     return $.getJSON('http://api.iing.tw/soundclouds/' + id + '.json?token=8888', function(item) {

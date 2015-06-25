@@ -8,7 +8,11 @@ soundManager = void 0;
 
 soundTrack = [];
 
+window.getVars = [];
+
 window.autoLoop = false;
+
+window.autoPlay = false;
 
 padLeft = function(str, length) {
   if (str.toString().length >= length) {
@@ -59,10 +63,18 @@ createWaveform = function(id, track_id, waveform, selector) {
       whileplaying: waveform.redraw,
       volume: 100,
       useHTML5Audio: true,
-      preferFlash: false
+      preferFlash: false,
+      autoPlay: window.autoPlay
     }, function(s) {
+      var element;
+
       $(selector + ' .play-button').attr('data-sid', s.sID);
-      return sound = s;
+      sound = s;
+      if (window.autoPlay === true) {
+        element = $('.play-button');
+        element.addClass('pause-button');
+        return element.removeClass('play-button');
+      }
     });
   });
 };
@@ -85,6 +97,10 @@ syncWaveform = function(id, token, data) {
 };
 
 $(function() {
+  window.getVars = getUrlVars();
+  if (parseInt(window.getVars['loop']) === 1) {
+    window.autoLoop = true;
+  }
   $('body').delegate('.play-button', 'click', function() {
     var playSong, sid, _this;
 
@@ -99,16 +115,21 @@ $(function() {
     playSong = function(element, sid) {
       return soundManager.play(sid, {
         onplay: function() {
+          element.addClass('pause-button');
           element.removeClass('loading');
-          element.removeClass('play-button');
-          return element.addClass('pause-button');
+          return element.removeClass('play-button');
+        },
+        onresume: function() {
+          element.addClass('pause-button');
+          element.removeClass('loading');
+          return element.removeClass('play-button');
         },
         onfinish: function() {
           if (window.autoLoop) {
             return playSong(element, sid);
           } else {
-            element.removeClass('pause-button');
-            return element.addClass('play-button');
+            element.addClass('play-button');
+            return element.removeClass('pause-button');
           }
         }
       });
