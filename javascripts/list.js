@@ -4,7 +4,7 @@ window.list = [];
 
 window.pageNumber = 0;
 
-window.perPage = 50;
+window.perPage = 100;
 
 appendList = function(page) {
   var array, end, item, songWaveform, start, waveform, _i, _len;
