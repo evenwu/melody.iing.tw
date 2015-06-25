@@ -63,17 +63,38 @@ createWaveform = function(id, track_id, waveform, selector) {
       whileplaying: waveform.redraw,
       volume: 100,
       useHTML5Audio: true,
-      preferFlash: false,
-      autoPlay: window.autoPlay
+      preferFlash: false
     }, function(s) {
-      var element;
+      var playSong;
 
       $(selector + ' .play-button').attr('data-sid', s.sID);
       sound = s;
       if (window.autoPlay === true) {
-        element = $('.play-button');
-        element.addClass('pause-button');
-        return element.removeClass('play-button');
+        xx('auto play');
+        playSong = function(element, sid) {
+          return soundManager.play(sid, {
+            onplay: function() {
+              element.addClass('pause-button');
+              element.removeClass('loading');
+              return element.removeClass('play-button');
+            },
+            onresume: function() {
+              element.addClass('pause-button');
+              element.removeClass('loading');
+              return element.removeClass('play-button');
+            },
+            onfinish: function() {
+              xx('song finish');
+              if (window.autoLoop) {
+                return playSong(element, sid);
+              } else {
+                element.addClass('play-button');
+                return element.removeClass('pause-button');
+              }
+            }
+          });
+        };
+        return playSong($('.play-button'), s.sID);
       }
     });
   });
@@ -125,6 +146,7 @@ $(function() {
           return element.removeClass('play-button');
         },
         onfinish: function() {
+          xx('song finish');
           if (window.autoLoop) {
             return playSong(element, sid);
           } else {
