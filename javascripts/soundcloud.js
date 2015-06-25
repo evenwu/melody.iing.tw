@@ -1,4 +1,4 @@
-var createWaveform, getUrlVars, nl2br, padLeft, soundManager, soundTrack, syncWaveform, waveformStringToArray;
+var createWaveform, getUrlVars, isMobile, nl2br, padLeft, soundManager, soundTrack, syncWaveform, waveformStringToArray;
 
 SC.initialize({
   client_id: 'd2f7da453051d648ae2f3e9ffbd4f69b'
@@ -13,6 +13,12 @@ window.getVars = [];
 window.autoLoop = false;
 
 window.autoPlay = false;
+
+window.isDesktop = true;
+
+isMobile = function() {
+  return navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/BlackBerry/);
+};
 
 getUrlVars = function() {
   var hash, hashes, i, vars;
@@ -85,7 +91,7 @@ createWaveform = function(id, track_id, waveform, selector) {
 
       $(selector + ' .play-button').attr('data-sid', s.sID);
       sound = s;
-      if (window.autoPlay === true) {
+      if (window.autoPlay === true && window.isDesktop === true) {
         xx('auto play');
         playSong = function(element, sid) {
           return soundManager.play(sid, {
@@ -134,6 +140,9 @@ syncWaveform = function(id, token, data) {
 };
 
 $(function() {
+  if (isMobile()) {
+    window.isDesktop = false;
+  }
   window.getVars = getUrlVars();
   if (parseInt(window.getVars['loop']) === 1) {
     window.autoLoop = true;
