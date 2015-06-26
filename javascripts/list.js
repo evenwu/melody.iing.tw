@@ -6,7 +6,7 @@ window.list = [];
 
 window.pageNumber = 1;
 
-window.perPage = 25;
+window.perPage = 100;
 
 songFilter = function(filter) {
   $('.song-list').find(".song-string:not(:Contains(" + filter + "))").parents('li').hide();
