@@ -4305,7 +4305,7 @@ body {
 .song-tool-buttons .vote-button-container .vote-count {
   color: white;
   background: #F5463C;
-  padding: 0 20px 0 34px;
+  padding: 0 10px 0 28px;
   -moz-border-radius-topright: 6px;
   -webkit-border-top-right-radius: 6px;
   border-top-right-radius: 6px;
@@ -4368,6 +4368,9 @@ body {
   }
   .song-tool-buttons .vote-button-container .vote-button {
     width: 150px;
+  }
+  .song-tool-buttons .vote-button-container .vote-count {
+    padding: 0 20px 0 34px;
   }
   .song-tool-buttons .fb-share {
     width: 90px;
