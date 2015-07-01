@@ -2182,7 +2182,7 @@ body {
   top: 550px;
 }
 .popup-loading-container .spinner {
-  top: calc(100vh - 20px);
+  top: calc(50vh - 20px);
 }
 @media (min-width: 1025px) {
   .spinner {
