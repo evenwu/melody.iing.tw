@@ -4,8 +4,6 @@ window.pageName = 'song';
 
 window.id = void 0;
 
-window.item = void 0;
-
 checkUserVoted = function(facebook_token) {
   return $.ajax({
     type: 'post',
@@ -74,7 +72,6 @@ $(function() {
       var songWaveform, waveform;
 
       xx(item);
-      window.item = item;
       $('.song-title').text(item.title);
       $('.song-artist').text(item.author_name);
       $('.song-number').text(padLeft(item.id, 3));
@@ -83,25 +80,43 @@ $(function() {
       $('.song-waveform-value').val(item.waveform);
       $('.vote-button').attr('data-id', item.id);
       $('.play-button').attr('data-trackid', item.track_id);
-      $('#nextSong').attr('href', '/song/' + item.next_song_id + '/?shuffle=1');
+      $('#nextSong').attr('href', '/song/' + item.next_song_id);
       $('.vote-count').text(item.vote_count + ' 票');
       $('.fb-share').attr('data-href', 'https://www.facebook.com/sharer/sharer.php?u=//melody.iing.tw/song/' + item.id);
       if (item.official_url) {
         $('.song-intro .song-artist').prepend('<a class="official-link" targe="_blank" href="' + item.official_url + '">Official Link</a>');
       }
-      songWaveform = waveformStringToArray(item.waveform);
-      waveform = new Waveform({
-        container: $('.waveform-preview').get(0),
-        innerColor: 'rgba(0,0,0,.1)',
-        data: songWaveform
-      });
-      if (window.shuffle) {
-        $('.play-button').addClass('loading');
-        createWaveform(item.id, item.track_id, songWaveform, '.song-player');
+      if (item.waveform === null) {
+        SC.get('/tracks/' + item.track_id, function(track) {
+          xx(track);
+          xx(track.waveform_url);
+          return $.getJSON('//waveformjs.org/w?callback=?', {
+            url: track.waveform_url
+          }, function(d) {
+            var songWaveform, waveform;
+
+            xx(d);
+            syncWaveform(item.id, item.token, d);
+            songWaveform = d;
+            return waveform = new Waveform({
+              container: $('.waveform-preview').get(0),
+              innerColor: 'rgba(0,0,0,.1)',
+              data: songWaveform
+            });
+          });
+        });
+      } else {
+        songWaveform = waveformStringToArray(item.waveform);
+        waveform = new Waveform({
+          container: $('.waveform-preview').get(0),
+          innerColor: 'rgba(0,0,0,.1)',
+          data: songWaveform
+        });
       }
+      createWaveform(item.id, item.track_id, songWaveform, '.page');
       $('.page .spinner').remove();
-      $('.song-detail').removeClass('off');
       $('.song-player-container').removeClass('off');
+      $('.song-detail').removeClass('off');
       return $('.page-bottom-illustrator').removeClass('off');
     });
   }
