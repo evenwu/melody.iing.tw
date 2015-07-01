@@ -2182,7 +2182,7 @@ body {
   position: fixed;
   top: 280px;
   left: calc(50% - 20px);
-  top: calc(100vh - 20px);
+  top: calc(50vh - 20px);
 }
 
 .container1 > div, .container2 > div, .container3 > div {
@@ -4684,11 +4684,15 @@ body {
   vertical-align: middle;
 }
 .popup-container .popup-dialog .popup-dialog-inner {
-  width: 320px;
+  width: 90%;
+  max-width: 320px;
   background: white;
   border: 6px solid #2BB179;
   padding: 24px 0;
   margin: 0 auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .popup-container .popup-dialog .popup-dialog-inner h2 {
   font-size: 24px;
@@ -4768,6 +4772,7 @@ body {
 @media (min-width: 1025px) {
   .popup-container .popup-dialog .popup-dialog-inner {
     width: 400px;
+    max-width: initial;
   }
 }
 
