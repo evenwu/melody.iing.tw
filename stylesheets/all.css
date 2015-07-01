@@ -2174,15 +2174,21 @@ body {
   width: 40px;
   height: 40px;
   position: fixed;
-  top: 350px;
+  top: 280px;
   left: calc(50% - 20px);
   z-index: 2000;
 }
 .list .spinner {
-  top: 500px;
+  top: 550px;
+}
+.popup-loading-container .spinner {
+  top: calc(100vh - 20px);
 }
 @media (min-width: 1025px) {
   .spinner {
+    top: 350px;
+  }
+  .list .spinner {
     top: 450px;
   }
 }
@@ -3647,39 +3653,7 @@ body {
   text-align: left;
   padding-bottom: 36px;
 }
-@media (min-width: 1025px) {
-  .page-title {
-    height: 265px;
-    margin-top: 0;
-    padding-bottom: 0;
-  }
-  .page-title .page-title-inner {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    max-width: 984px;
-    position: relative;
-    text-align: left;
-    background: transparent;
-  }
-  .page-title .page-title-inner h1 {
-    margin-top: 48px;
-    font-size: 34px;
-    line-height: 48px;
-    text-align: left;
-    padding: 0;
-    padding-bottom: 16px;
-  }
-  .page-title .page-title-inner p {
-    font-size: 16px;
-    line-height: 24px;
-  }
-  .page-title .page-title-inner p br {
-    display: none;
-  }
-  .page-title.list {
-    background-position: 200% 0%;
-  }
+@media (min-width: 640px) {
   .page-title.song {
     height: 150px;
     padding-bottom: 0;
@@ -3712,6 +3686,35 @@ body {
   }
 }
 @media (min-width: 1025px) {
+  .page-title {
+    height: 265px;
+    margin-top: 0;
+    padding-bottom: 0;
+  }
+  .page-title .page-title-inner {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    max-width: 984px;
+    position: relative;
+    text-align: left;
+    background: transparent;
+  }
+  .page-title .page-title-inner h1 {
+    margin-top: 48px;
+    font-size: 34px;
+    line-height: 48px;
+    text-align: left;
+    padding: 0;
+    padding-bottom: 16px;
+  }
+  .page-title .page-title-inner p {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .page-title .page-title-inner p br {
+    display: none;
+  }
   .page-title.song {
     height: 185px;
   }
@@ -3813,7 +3816,7 @@ body {
   margin: 0 auto;
 }
 .search-bar.off {
-  display: none;
+  opacity: 0;
 }
 .search-bar * {
   display: inline-block;
@@ -3928,7 +3931,7 @@ body {
   right: 0;
   z-index: -1000;
 }
-.loading .song-list .song-item.hide {
+.loading .song-list .song-item {
   display: block;
   opacity: 0;
 }
@@ -4096,7 +4099,7 @@ body {
   padding: 40px 0 5px 0;
 }
 .song-player-container.off {
-  display: none;
+  opacity: 0;
 }
 @media (min-width: 640px) {
   .song-player-container {

@@ -106,7 +106,6 @@ $(function() {
   $.getJSON('//api.iing.tw/soundclouds.json?token=8888', function(r) {
     var display, i, item, songWaveform, waveform, _i, _len, _ref, _results;
 
-    xx(r);
     r = r.slice().sort(function(a, b) {
       return a.id - b.id;
     });
@@ -130,50 +129,16 @@ $(function() {
         innerColor: 'rgba(0,0,0,.1)',
         data: songWaveform
       });
-      createWaveform(item.id, item.track_id, songWaveform, '.song-item-' + item.id);
       i++;
       if (i === window.list.length) {
-        $('.song-list').removeClass('loading');
         $('.search-bar').removeClass('off');
+        $('.song-list').removeClass('loading');
         _results.push($('.page .spinner').remove());
       } else {
         _results.push(void 0);
       }
     }
     return _results;
-  });
-  $('body').delegate('.list-more-song', 'click', function() {
-    var i;
-
-    i = window.pageNumber * window.perPage;
-    while (i < (window.pageNumber + 1) * window.perPage) {
-      $('.song-item:eq(' + i + ')').removeClass('hide');
-      i++;
-    }
-    window.pageNumber++;
-    if ($('.song-item.hide').length === 0) {
-      return $('.list-more-song').remove();
-    }
-  });
-  $(window).scroll(function(event) {
-    var height, i, scroll;
-
-    xx(scroll = $(window).scrollTop());
-    xx(height = $(document).height());
-    if (scroll > height * 0.5 && window.append === false && $('.list-more-song').length > 0) {
-      xx('list appending');
-      window.append = true;
-      i = window.pageNumber * window.perPage;
-      while (i < (window.pageNumber + 1) * window.perPage) {
-        $('.song-item:eq(' + i + ')').removeClass('hide');
-        i++;
-      }
-      window.append = false;
-      window.pageNumber++;
-      if ($('.song-item.hide').length === 0) {
-        return $('.list-more-song').remove();
-      }
-    }
   });
   $('body').delegate('.search-string', 'keydown', function() {
     return countdown = Date.now();

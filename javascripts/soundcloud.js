@@ -1,4 +1,4 @@
-var $popup400ErrorContent, $popupAlarmContent, $popupErrorContent, $popupLoginContent, $popupLoginErrorContent, $popupSuccessContent, createWaveform, getUrlVars, isMobile, nl2br, padLeft, showPopup, showPopupLoading, soundManager, soundTrack, syncWaveform, vote, voteCheck, waveformStringToArray;
+var $popup400ErrorContent, $popupAlarmContent, $popupErrorContent, $popupLoginContent, $popupLoginErrorContent, $popupSuccessContent, createWaveform, getItemById, getUrlVars, isMobile, nl2br, padLeft, showPopup, showPopupLoading, soundManager, soundTrack, syncWaveform, vote, voteCheck, waveformStringToArray;
 
 SC.initialize({
   client_id: 'd2f7da453051d648ae2f3e9ffbd4f69b'
@@ -185,74 +185,81 @@ showPopupLoading = function() {
   return loading.addClass('on');
 };
 
-createWaveform = function(id, track_id, waveform, selector) {
-  return SC.get('/tracks/' + track_id, function(track) {
-    var ctx, gradient, sound;
+createWaveform = function(id, track_id, waveform, selector, autoplay) {
+  if ($(selector + ' .waveform canvas').length <= 0) {
+    return SC.get('/tracks/' + track_id, function(track) {
+      var ctx, gradient, sound;
 
-    soundTrack[track_id] = track;
-    sound = void 0;
-    waveform = new Waveform({
-      container: $(selector + ' .waveform').get(0),
-      innerColor: 'rgba(0,0,0,.1)',
-      data: waveform
-    });
-    ctx = waveform.context;
-    gradient = ctx.createLinearGradient(0, 0, 0, waveform.height);
-    gradient.addColorStop(0.0, '#E4E779');
-    gradient.addColorStop(1.0, '#57C0C7');
-    waveform.innerColor = function(x) {
-      if (sound && x < sound.position / sound.durationEstimate) {
-        return gradient;
-      } else if (sound && x < sound.bytesLoaded / sound.bytesTotal) {
-        return '#D1D1D1';
-      } else {
-        return '#F0F0F0';
-      }
-    };
-    return SC.stream('/tracks/' + track_id, {
-      whileloading: waveform.redraw,
-      whileplaying: waveform.redraw,
-      volume: 100,
-      useHTML5Audio: true,
-      preferFlash: false
-    }, function(s) {
-      var playSong;
-
-      $(selector + ' .play-button').attr('data-sid', s.sID);
-      sound = s;
-      if (window.isDesktop) {
-        if (window.autoPlay || window.shuffle) {
-          xx('auto play');
-          playSong = function(element, sid) {
-            return soundManager.play(sid, {
-              onplay: function() {
-                element.addClass('pause-button');
-                element.removeClass('loading');
-                return element.removeClass('play-button');
-              },
-              onresume: function() {
-                element.addClass('pause-button');
-                element.removeClass('loading');
-                return element.removeClass('play-button');
-              },
-              onfinish: function() {
-                xx('song finish');
-                if (window.autoLoop) {
-                  return playSong(element, sid);
-                } else if (window.shuffle && window.pageName === 'song') {
-                  return window.location = $('#nextSong').attr('href') + '?shuffle=1';
-                } else {
-                  element.addClass('play-button');
-                  return element.removeClass('pause-button');
-                }
-              }
-            });
-          };
-          return playSong($('.play-button'), s.sID);
+      soundTrack[track_id] = track;
+      sound = void 0;
+      $(selector + ' .waveform-preview canvas').remove();
+      waveform = new Waveform({
+        container: $(selector + ' .waveform').get(0),
+        innerColor: 'rgba(0,0,0,.1)',
+        data: waveform
+      });
+      ctx = waveform.context;
+      gradient = ctx.createLinearGradient(0, 0, 0, waveform.height);
+      gradient.addColorStop(0.0, '#E4E779');
+      gradient.addColorStop(1.0, '#57C0C7');
+      waveform.innerColor = function(x) {
+        if (sound && x < sound.position / sound.durationEstimate) {
+          return gradient;
+        } else if (sound && x < sound.bytesLoaded / sound.bytesTotal) {
+          return 'rgba(0,0,0,.2)';
+        } else {
+          return 'rgba(0,0,0,.1)';
         }
-      }
+      };
+      return SC.stream('/tracks/' + track_id, {
+        whileloading: waveform.redraw,
+        whileplaying: waveform.redraw,
+        volume: 100,
+        useHTML5Audio: true,
+        preferFlash: false
+      }, function(s) {
+        var playSong;
+
+        $(selector + ' .play-button').attr('data-sid', s.sID);
+        sound = s;
+        if (window.isDesktop) {
+          if (window.autoPlay || window.shuffle || autoplay) {
+            xx('auto play');
+            playSong = function(element, sid) {
+              return soundManager.play(sid, {
+                onplay: function() {
+                  element.addClass('pause-button');
+                  element.removeClass('loading');
+                  return element.removeClass('play-button');
+                },
+                onresume: function() {
+                  element.addClass('pause-button');
+                  element.removeClass('loading');
+                  return element.removeClass('play-button');
+                },
+                onfinish: function() {
+                  xx('song finish');
+                  if (window.autoLoop) {
+                    return playSong(element, sid);
+                  } else if (window.shuffle && window.pageName === 'song') {
+                    return window.location = $('#nextSong').attr('href');
+                  } else {
+                    element.addClass('play-button');
+                    return element.removeClass('pause-button');
+                  }
+                }
+              });
+            };
+            if (window.pageName === 'list') {
+              return playSong($('.play-button.loading'), s.sID);
+            } else {
+              return playSong($('.play-button'), s.sID);
+            }
+          }
+        }
+      });
     });
-  });
+  }
 };
 
 syncWaveform = function(id, token, data) {
@@ -270,6 +277,18 @@ syncWaveform = function(id, token, data) {
       return xx(response);
     }
   });
+};
+
+getItemById = function(array, id) {
+  var i;
+
+  i = 0;
+  while (i < array.length) {
+    if (array[i].id === id) {
+      return array[i];
+    }
+    i++;
+  }
 };
 
 $(function() {
@@ -321,39 +340,52 @@ $(function() {
     });
   });
   $('body').delegate('.play-button', 'click', function() {
-    var playSong, sid, _this;
+    var item, playSong, sid, songid, trackid, waveform, _this;
 
+    $(this).addClass('loading');
     if (soundManager !== void 0) {
       soundManager.pauseAll();
       $('.pause-button').addClass('play-button');
       $('.play-button').removeClass('pause-button');
     }
-    _this = $(this);
-    _this.addClass('loading');
-    sid = _this.data('sid');
-    playSong = function(element, sid) {
-      return soundManager.play(sid, {
-        onplay: function() {
-          element.addClass('pause-button');
-          element.removeClass('loading');
-          return element.removeClass('play-button');
-        },
-        onresume: function() {
-          element.addClass('pause-button');
-          element.removeClass('loading');
-          return element.removeClass('play-button');
-        },
-        onfinish: function() {
-          if (window.autoLoop) {
-            return playSong(element, sid);
-          } else {
-            element.addClass('play-button');
-            return element.removeClass('pause-button');
+    if ($(this).parents('.song-item').find('.waveform').find('canvas').length <= 0) {
+      songid = $(this).parents('.song-item').data('id');
+      trackid = $(this).data('trackid');
+      if (window.pageName === 'list') {
+        item = getItemById(window.list, songid);
+        waveform = waveformStringToArray(item.waveform);
+        return createWaveform(songid, trackid, waveform, '.song-item-' + songid, true);
+      } else if (window.pageName === 'song') {
+        waveform = waveformStringToArray(window.item.waveform);
+        return createWaveform(songid, trackid, waveform, '.page', true);
+      }
+    } else {
+      _this = $(this);
+      sid = _this.data('sid');
+      playSong = function(element, sid) {
+        return soundManager.play(sid, {
+          onplay: function() {
+            element.addClass('pause-button');
+            element.removeClass('loading');
+            return element.removeClass('play-button');
+          },
+          onresume: function() {
+            element.addClass('pause-button');
+            element.removeClass('loading');
+            return element.removeClass('play-button');
+          },
+          onfinish: function() {
+            if (window.autoLoop) {
+              return playSong(element, sid);
+            } else {
+              element.addClass('play-button');
+              return element.removeClass('pause-button');
+            }
           }
-        }
-      });
-    };
-    return playSong(_this, sid);
+        });
+      };
+      return playSong(_this, sid);
+    }
   });
   $('body').delegate('.pause-button', 'click', function() {
     soundManager.pauseAll();
