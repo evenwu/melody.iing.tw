@@ -56,7 +56,9 @@ disableVoteButton = function(soundcloud_id) {
 $songItem = function(item, display) {
   var top20;
 
-  if (item.top20 === true) {
+  if (item.winners !== void 0 && item.winners === true) {
+    top20 = ' top20';
+  } else if (item.top20 !== void 0 && item.top20 === true) {
     top20 = ' top20';
   } else {
     top20 = '';
