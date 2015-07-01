@@ -1,7 +1,57 @@
+var checkUserVoted, disableVoteButton;
+
 window.pageName = 'song';
 
+window.id = void 0;
+
+checkUserVoted = function(facebook_token) {
+  return $.ajax({
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: {
+      facebook_token: facebook_token
+    },
+    url: '//api.iing.tw/check_user_voted.json',
+    success: function(response) {
+      var id, _i, _len, _ref, _results;
+
+      _ref = response.data;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        id = _ref[_i];
+        if (id === window.id) {
+          _results.push(disableVoteButton());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    }
+  });
+};
+
+disableVoteButton = function() {
+  var button;
+
+  button = $('.vote-button');
+  if (button.hasClass('done') === false) {
+    button.addClass('done');
+    return button.text('感謝支持！');
+  }
+};
+
+$(document).on('fbload', function() {
+  return FB.getLoginStatus(function(response) {
+    xx(response);
+    if (response.status === 'connected') {
+      return checkUserVoted(response.authResponse.accessToken);
+    }
+  });
+});
+
 $(function() {
-  var explode, id, song_no, url;
+  var explode, song_no, url;
 
   xx(window.getVars);
   if (parseInt(window.getVars['autoplay']) === 1) {
@@ -17,21 +67,22 @@ $(function() {
   explode = url.split('/');
   song_no = explode[4];
   if (typeof song_no !== 'undefined' && parseInt(song_no) > 0) {
-    id = parseInt(song_no);
-    return $.getJSON('http://api.iing.tw/soundclouds/' + id + '.json?token=8888', function(item) {
+    window.id = parseInt(song_no);
+    return $.getJSON('//api.iing.tw/soundclouds/' + window.id + '.json?token=8888', function(item) {
       var songWaveform, waveform;
 
+      xx(item);
       $('.song-title').text(item.title);
       $('.song-artist').text(item.author_name);
       $('.song-number').text(padLeft(item.id, 3));
-      $('.vote-count span').text(item.vote_count);
       $('.song-lyric p').html(nl2br(item.lyrics));
       $('.song-intro p').html(nl2br(item.desc));
       $('.song-waveform-value').val(item.waveform);
       $('.vote-button').attr('data-id', item.id);
       $('.play-button').attr('data-trackid', item.track_id);
-      $('.next-song a').attr('href', '/song/' + item.next_song_id);
-      $('.fb-share').attr('data-href', 'https://www.facebook.com/sharer/sharer.php?u=http://melody.iing.tw/song/' + item.id);
+      $('#nextSong').attr('href', '/song/' + item.next_song_id);
+      $('.vote-count').text(item.vote_count + ' 票');
+      $('.fb-share').attr('data-href', 'https://www.facebook.com/sharer/sharer.php?u=//melody.iing.tw/song/' + item.id);
       if (item.official_url) {
         $('.song-intro .song-artist').prepend('<a class="official-link" targe="_blank" href="' + item.official_url + '">Official Link</a>');
       }
@@ -39,7 +90,7 @@ $(function() {
         SC.get('/tracks/' + item.track_id, function(track) {
           xx(track);
           xx(track.waveform_url);
-          return $.getJSON('http://waveformjs.org/w?callback=?', {
+          return $.getJSON('//waveformjs.org/w?callback=?', {
             url: track.waveform_url
           }, function(d) {
             var songWaveform, waveform;
@@ -49,7 +100,7 @@ $(function() {
             songWaveform = d;
             return waveform = new Waveform({
               container: $('.waveform-preview').get(0),
-              innerColor: '#F0F0F0',
+              innerColor: 'rgba(0,0,0,.1)',
               data: songWaveform
             });
           });
@@ -58,11 +109,15 @@ $(function() {
         songWaveform = waveformStringToArray(item.waveform);
         waveform = new Waveform({
           container: $('.waveform-preview').get(0),
-          innerColor: '#F0F0F0',
+          innerColor: 'rgba(0,0,0,.1)',
           data: songWaveform
         });
       }
-      return createWaveform(item.id, item.track_id, songWaveform, '.song-player');
+      createWaveform(item.id, item.track_id, songWaveform, '.page');
+      $('.page .spinner').remove();
+      $('.song-player-container').removeClass('off');
+      $('.song-detail').removeClass('off');
+      return $('.page-bottom-illustrator').removeClass('off');
     });
   }
 });

@@ -1,0 +1,9 @@
+title:        "台灣美樂地"
+slogan:       "2016蔡英文競選歌曲徵件"
+discription:  "為這片土地，寫一首歌！2016蔡英文競選專輯《台灣美樂地》預計九月發行。廣邀所有對台灣有牽掛、對音樂有熱誠的創作者，為這片土地譜出我們交織的記憶，唱出屬於台灣的melody。"
+keywords:     "蔡英文,美樂地,美樂蒂,melody,競選,競選專輯,競選歌曲,總統,小辣椒,空心菜,洪秀柱"
+og_url:       "http://melody.iing.tw/"
+og_image:     "http://melody.iing.tw/images/fb.png"
+
+# Build settings
+markdown: kramdown

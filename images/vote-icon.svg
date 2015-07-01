@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="12px" height="11px" viewBox="0 0 12 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>vote-icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="slice" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="vote-icon" sketch:type="MSLayerGroup" transform="translate(0.423611, -0.500000)" fill="#FFFFFF">
+            <path d="M0,3.53846154 L0,3.53846154 L1,2.53846154 L1,11 L0,10 L8.64285714,10 L7.64285714,11 L7.64285714,2.53846154 L8.64285714,3.53846154 L0,3.53846154 Z M0,2.53846154 L8.64285714,2.53846154 L8.64285714,11 L0,11 L0,2.53846154 L0,2.53846154 Z" id="Shape" sketch:type="MSShapeGroup"></path>
+            <path d="M1.99890047,5.66445681 L4.01536253,8.46606439 L4.39348015,8.99140886 L4.80629061,8.4928637 L10.7294561,1.33954339 L9.95922976,0.701772718 L4.0360643,7.85509303 L4.82699238,7.88189235 L2.81053033,5.08028477 L1.99890047,5.66445681 L1.99890047,5.66445681 Z" id="Shape" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
