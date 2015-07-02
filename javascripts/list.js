@@ -10,6 +10,8 @@ window.perPage = 200;
 
 window.append = false;
 
+window.hash = 'asc';
+
 countdown = Date.now();
 
 currentTime = Date.now();
@@ -103,6 +105,23 @@ $(document).on('fbload', function() {
 });
 
 $(function() {
+  var hash;
+
+  if (window.location.hash !== '') {
+    hash = window.location.hash.toLowerCase();
+    if (hash === 'asc') {
+      window.hash = 'asc';
+    }
+    if (hash === 'desc') {
+      window.hash = 'desc';
+    } else if (hash === 'ranking') {
+      window.hash = 'ranking';
+    } else {
+      window.hash = 'asc';
+    }
+  } else {
+    window.hash = 'asc';
+  }
   $.getJSON('//api.iing.tw/soundclouds.json?token=8888', function(r) {
     var display, i, item, songWaveform, waveform, _i, _len, _ref, _results;
 

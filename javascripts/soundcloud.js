@@ -50,14 +50,13 @@ $popupErrorContent = function() {
   return '<i class="icon-error"></i>\
   <h2>糟糕！投票失敗...</h2>\
   <p>請嘗試重新整理頁面</p>\
-  <button class="btn btn_primary" type="button">再試一次</button><br>\
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
 $popup400ErrorContent = function() {
   return '<i class="icon-error"></i>\
-  <h2>嘿，投票還沒開始唷...</h2>\
-  <p>投票時間 7/2 10:00 ～ 7/6 23:59</p>\
+  <h2>糟糕，出錯了...</h2>\
+  <p>請嘗試重新整理頁面</p>\
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
