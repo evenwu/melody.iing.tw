@@ -109,12 +109,13 @@ $(function() {
 
   if (window.location.hash !== '') {
     hash = window.location.hash.toLowerCase();
-    if (hash === 'asc') {
+    xx(hash);
+    if (hash === '#asc') {
       window.hash = 'asc';
     }
-    if (hash === 'desc') {
+    if (hash === '#desc') {
       window.hash = 'desc';
-    } else if (hash === 'ranking') {
+    } else if (hash === '#ranking') {
       window.hash = 'ranking';
     } else {
       window.hash = 'asc';
@@ -122,6 +123,7 @@ $(function() {
   } else {
     window.hash = 'asc';
   }
+  setLoadingTime();
   $.getJSON('//api.iing.tw/soundclouds.json?token=8888', function(r) {
     var display, i, item, songWaveform, waveform, _i, _len, _ref, _results;
 
@@ -154,9 +156,30 @@ $(function() {
       }
       i++;
       if (i === window.list.length) {
+        xx(window.hash);
+        if (window.hash === 'asc') {
+          $('#listSorting').val(1);
+          tinysort('ul.song-list>li', {
+            data: 'id',
+            order: 'asc'
+          });
+        } else if (window.hash === 'desc') {
+          $('#listSorting').val(2);
+          tinysort('ul.song-list>li', {
+            data: 'id',
+            order: 'desc'
+          });
+        } else if (window.hash === 'ranking') {
+          $('#listSorting').val(3);
+          tinysort('ul.song-list>li', {
+            data: 'vote',
+            order: 'desc'
+          });
+        }
         $('.search-bar').removeClass('off');
         $('.song-list').removeClass('loading');
-        _results.push($('.page .spinner').remove());
+        $('.page .spinner').remove();
+        _results.push(stopLoadingTime());
       } else {
         _results.push(void 0);
       }
@@ -194,16 +217,19 @@ $(function() {
 
     value = parseInt($(this).val());
     if (value === 1) {
+      window.location.hash = '#asc';
       return tinysort('ul.song-list>li', {
         data: 'id',
         order: 'asc'
       });
     } else if (value === 2) {
+      window.location.hash = '#desc';
       return tinysort('ul.song-list>li', {
         data: 'id',
         order: 'desc'
       });
     } else if (value === 3) {
+      window.location.hash = '#ranking';
       return tinysort('ul.song-list>li', {
         data: 'vote',
         order: 'desc'

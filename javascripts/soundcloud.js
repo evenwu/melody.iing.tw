@@ -1,4 +1,4 @@
-var $popup400ErrorContent, $popupAlarmContent, $popupErrorContent, $popupLoginContent, $popupLoginErrorContent, $popupSuccessContent, createWaveform, getItemById, getUrlVars, isMobile, nl2br, padLeft, showPopup, showPopupLoading, soundManager, soundTrack, syncWaveform, vote, voteCheck, waveformStringToArray;
+var $popup400ErrorContent, $popup429ErrorContent, $popupAlarmContent, $popupErrorContent, $popupLoginContent, $popupLoginErrorContent, $popupSuccessContent, createWaveform, getItemById, getUrlVars, isMobile, nl2br, padLeft, setLoadingTime, showPopup, showPopupLoading, soundManager, soundTrack, stopLoadingTime, syncWaveform, vote, voteCheck, waveformStringToArray;
 
 SC.initialize({
   client_id: 'd2f7da453051d648ae2f3e9ffbd4f69b'
@@ -21,6 +21,8 @@ window.isDesktop = true;
 window.soundcloudId = void 0;
 
 window.userVoted = [];
+
+window.loadingTime = void 0;
 
 $popupLoginContent = function(id) {
   return '<i class="icon-alarm"></i>\
@@ -57,6 +59,13 @@ $popup400ErrorContent = function() {
   return '<i class="icon-error"></i>\
   <h2>糟糕，出錯了...</h2>\
   <p>請嘗試重新整理頁面</p>\
+  <button type="button" class="close-popup">關閉視窗</button>';
+};
+
+$popup429ErrorContent = function() {
+  return '<i class="icon-error"></i>\
+  <h2>目前網路壅塞</h2>\
+  <p>請晚一點再來播放</p>\
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
@@ -150,7 +159,11 @@ vote = function(facebook_token, soundcloud_id) {
       if (r.message === 'success') {
         showPopup($popupSuccessContent(soundcloud_id));
         disableVoteButton(soundcloud_id);
-        return $('.song-item-' + soundcloud_id + ' .vote-count').text(r.vote_count + ' 票');
+        if (window.pageName === 'list') {
+          return $('.song-item-' + soundcloud_id + ' .vote-count').text(r.vote_count + ' 票');
+        } else {
+          return $('.vote-count').text(r.vote_count + ' 票');
+        }
       } else {
         return showPopup($popupErrorContent());
       }
@@ -161,6 +174,7 @@ vote = function(facebook_token, soundcloud_id) {
 showPopup = function(html) {
   var loading, popup;
 
+  stopLoadingTime();
   popup = $('.popup-container');
   loading = $('.popup-loading-container');
   if (popup.hasClass('on') === true) {
@@ -232,12 +246,21 @@ createWaveform = function(id, track_id, waveform, selector, autoplay) {
             xx('auto play starting');
             playSong = function(element, sid) {
               return soundManager.play(sid, {
+                onload: function(state) {
+                  if (state === false) {
+                    showPopup($popup429ErrorContent());
+                    element.addClass('play-button');
+                    return element.removeClass('pause-button');
+                  }
+                },
                 onplay: function() {
+                  xx('play');
                   element.addClass('pause-button');
                   element.removeClass('loading');
                   return element.removeClass('play-button');
                 },
                 onresume: function() {
+                  xx('resume');
                   element.addClass('pause-button');
                   element.removeClass('loading');
                   return element.removeClass('play-button');
@@ -296,6 +319,28 @@ getItemById = function(array, id) {
   }
 };
 
+setLoadingTime = function() {
+  var loadingStateCheckInterval;
+
+  window.loadingTime = Date.now();
+  return loadingStateCheckInterval = setInterval(function() {
+    if (window.loadingTime === void 0) {
+      return clearInterval(loadingStateCheckInterval);
+    } else {
+      if (Date.now() - window.loadingTime >= 5000) {
+        if ($('.too-many-people-is-here').hasClass('on') === false) {
+          return $('.too-many-people-is-here').addClass('on');
+        }
+      }
+    }
+  }, 500);
+};
+
+stopLoadingTime = function() {
+  window.loadingTime = void 0;
+  return $('.too-many-people-is-here').removeClass('on');
+};
+
 $(function() {
   if (isMobile()) {
     xx('is mobile');
@@ -312,6 +357,7 @@ $(function() {
     var soundcloud_id;
 
     xx('vote button clicked');
+    setLoadingTime();
     soundcloud_id = $(this).data('id');
     showPopupLoading();
     return FB.getLoginStatus(function(response) {
@@ -374,6 +420,13 @@ $(function() {
       sid = _this.data('sid');
       playSong = function(element, sid) {
         return soundManager.play(sid, {
+          onload: function(state) {
+            if (state === false) {
+              showPopup($popup429ErrorContent());
+              element.addClass('play-button');
+              return element.removeClass('pause-button');
+            }
+          },
           onplay: function() {
             element.addClass('pause-button');
             element.removeClass('loading');

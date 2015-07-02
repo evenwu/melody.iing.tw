@@ -70,6 +70,7 @@ $(function() {
   song_no = explode[4];
   if (typeof song_no !== 'undefined' && parseInt(song_no) > 0) {
     window.id = parseInt(song_no);
+    setLoadingTime();
     return $.getJSON('//api.iing.tw/soundclouds/' + window.id + '.json?token=8888', function(item) {
       var songWaveform, waveform;
 
@@ -105,7 +106,8 @@ $(function() {
       $('.page .spinner').remove();
       $('.song-detail').removeClass('off');
       $('.song-player-container').removeClass('off');
-      return $('.page-bottom-illustrator').removeClass('off');
+      $('.page-bottom-illustrator').removeClass('off');
+      return stopLoadingTime();
     });
   }
 });
