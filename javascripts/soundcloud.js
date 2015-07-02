@@ -36,7 +36,7 @@ $popupAlarmContent = function(id) {
   return '<i class="icon-alarm"></i>\
   <h2>咦，你今天已經投過囉！</h2>\
   <p>每天可以對任一首歌投票一次</p>\
-  <a class="btn btn_primary" href="https://www.facebook.com/sharer/sharer.php?u=//melody.iing.tw/song/' + id + '" target="_blank">分享拉票</a><br>\
+  <a class="btn btn_primary" href="https://www.facebook.com/sharer/sharer.php?u=http://melody.iing.tw/song/' + id + '" target="_blank">分享拉票</a><br>\
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
@@ -44,7 +44,7 @@ $popupSuccessContent = function(id) {
   return '<i class="icon-success"></i>\
   <h2>恭喜你完成投票！</h2>\
   <p>是否將投票的好歌曲分享到臉書？</p>\
-  <a class="btn btn_primary" href="https://www.facebook.com/sharer/sharer.php?u=//melody.iing.tw/song/' + id + '" target="_blank">分享拉票</a><br>\
+  <a class="btn btn_primary" href="https://www.facebook.com/sharer/sharer.php?u=http://melody.iing.tw/song/' + id + '" target="_blank">分享拉票</a><br>\
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 

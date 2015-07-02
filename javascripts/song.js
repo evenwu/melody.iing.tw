@@ -86,7 +86,7 @@ $(function() {
       $('.play-button').attr('data-id', item.id).attr('data-trackid', item.track_id);
       $('#nextSong').attr('href', '/song/' + item.next_song_id + '/?shuffle=1');
       $('.vote-count').text(item.vote_count + ' 票');
-      $('.fb-share').attr('data-href', 'https://www.facebook.com/sharer/sharer.php?u=//melody.iing.tw/song/' + item.id);
+      $('.fb-share').attr('data-href', 'https://www.facebook.com/sharer/sharer.php?u=http://melody.iing.tw/song/' + item.id);
       if (item.official_url) {
         $('.song-intro .song-artist').prepend('<a class="official-link" targe="_blank" href="' + item.official_url + '">Official Link</a>');
       }
