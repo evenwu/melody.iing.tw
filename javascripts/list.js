@@ -124,8 +124,7 @@ $(function() {
     xx(hash);
     if (hash === '#asc') {
       window.hash = 'asc';
-    }
-    if (hash === '#desc') {
+    } else if (hash === '#desc') {
       window.hash = 'desc';
     } else if (hash === '#ranking') {
       window.hash = 'ranking';
@@ -157,6 +156,9 @@ $(function() {
         display = '';
       }
       $('.song-list').append($songItem(item, display));
+      if (isDesktop === false) {
+        $('.song-item-' + item.id + ' .play-button').addClass('loading');
+      }
       i++;
       if (i === window.list.length) {
         xx(window.hash);
@@ -226,7 +228,6 @@ $(function() {
             innerColor: 'rgba(0,0,0,.1)',
             data: songWaveform
           });
-          $('.song-item-' + item.id + ' .play-button').addClass('loading');
           _results.push(createWaveform(item.id, item.track_id, songWaveform, '.song-item-' + item.id));
         }
         return _results;

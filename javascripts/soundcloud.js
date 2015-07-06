@@ -1,4 +1,4 @@
-var $popup400ErrorContent, $popup429ErrorContent, $popupAlarmContent, $popupErrorContent, $popupLoginContent, $popupLoginErrorContent, $popupSuccessContent, createWaveform, getItemById, getUrlVars, isMobile, nl2br, padLeft, setLoadingTime, showPopup, showPopupLoading, soundManager, soundTrack, stopLoadingTime, syncWaveform, vote, voteCheck, waveformStringToArray;
+var $popup401ErrorContent, $popup429ErrorContent, $popupAlarmContent, $popupErrorContent, $popupEventCloseContent, $popupLoginContent, $popupLoginErrorContent, $popupSuccessContent, createWaveform, getItemById, getUrlVars, isMobile, nl2br, padLeft, setLoadingTime, showPopup, showPopupLoading, soundManager, soundTrack, stopLoadingTime, syncWaveform, vote, voteCheck, waveformStringToArray;
 
 SC.initialize({
   client_id: 'd2f7da453051d648ae2f3e9ffbd4f69b'
@@ -40,6 +40,13 @@ $popupAlarmContent = function(id) {
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
+$popupEventCloseContent = function() {
+  return '<i class="icon-alarm"></i>\
+  <h2>投票時間已過</h2>\
+  <p>7/9 將進行決選，敬請期待</p>\
+  <button type="button" class="close-popup">關閉視窗</button>';
+};
+
 $popupSuccessContent = function(id) {
   return '<i class="icon-success"></i>\
   <h2>恭喜你完成投票！</h2>\
@@ -55,7 +62,7 @@ $popupErrorContent = function() {
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
-$popup400ErrorContent = function() {
+$popup401ErrorContent = function() {
   return '<i class="icon-error"></i>\
   <h2>糟糕，出錯了...</h2>\
   <p>請嘗試重新整理頁面</p>\
@@ -73,7 +80,6 @@ $popupLoginErrorContent = function() {
   return '<i class="icon-error"></i>\
   <h2>糟糕！登入失敗...</h2>\
   <p>請嘗試重新整理頁面</p>\
-  <button class="btn btn_primary" type="button">再試一次</button><br>\
   <button type="button" class="close-popup">關閉視窗</button>';
 };
 
@@ -118,6 +124,7 @@ waveformStringToArray = function(str) {
 
 voteCheck = function(facebook_token, soundcloud_id) {
   xx('vote check');
+  facebook_token = '123';
   return $.ajax({
     type: 'post',
     dataType: 'json',
@@ -127,12 +134,17 @@ voteCheck = function(facebook_token, soundcloud_id) {
       soundcloud_id: soundcloud_id
     },
     url: '//api.iing.tw/vote_check.json',
-    error: function(response) {
-      xx(response);
-      return showPopup($popup400ErrorContent());
+    error: function(r) {
+      xx(r);
+      if (r.status === 400) {
+        return showPopup($popupEventCloseContent());
+      } else {
+        return showPopup($popup401ErrorContent());
+      }
     },
-    success: function(response) {
-      if (response.message === true) {
+    success: function(r) {
+      xx(r);
+      if (r.message === true) {
         return vote(facebook_token, soundcloud_id);
       } else {
         disableVoteButton(soundcloud_id);
@@ -154,6 +166,14 @@ vote = function(facebook_token, soundcloud_id) {
       soundcloud_id: soundcloud_id
     },
     url: '//api.iing.tw/votes.json',
+    error: function(r) {
+      xx(r);
+      if (r.status === 400) {
+        return showPopup($popupEventCloseContent());
+      } else {
+        return showPopup($popup401ErrorContent());
+      }
+    },
     success: function(r) {
       xx(r);
       if (r.message === 'success') {
@@ -357,21 +377,25 @@ $(function() {
     var soundcloud_id;
 
     xx('vote button clicked');
-    setLoadingTime();
-    soundcloud_id = $(this).data('id');
-    showPopupLoading();
-    return FB.getLoginStatus(function(response) {
-      var facebook_token;
+    if (window.inInterval === false) {
+      return showPopup($popupEventCloseContent);
+    } else {
+      setLoadingTime();
+      soundcloud_id = $(this).data('id');
+      showPopupLoading();
+      return FB.getLoginStatus(function(response) {
+        var facebook_token;
 
-      xx(response);
-      if (response.status === 'connected') {
-        facebook_token = response.authResponse.accessToken;
-        return voteCheck(facebook_token, soundcloud_id);
-      } else {
-        window.soundcloudId = soundcloud_id;
-        return showPopup($popupLoginContent());
-      }
-    });
+        xx(response);
+        if (response.status === 'connected') {
+          facebook_token = response.authResponse.accessToken;
+          return voteCheck(facebook_token, soundcloud_id);
+        } else {
+          window.soundcloudId = soundcloud_id;
+          return showPopup($popupLoginContent());
+        }
+      });
+    }
   });
   $('body').delegate('.login-button', 'click', function() {
     xx('login button clicked');
