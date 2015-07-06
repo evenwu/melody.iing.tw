@@ -2,7 +2,7 @@ var DEBUG, xx;
 
 DEBUG = false;
 
-window.inInterval = true;
+window.inInterval = false;
 
 xx = function(x) {
   return DEBUG && console.log(x);
