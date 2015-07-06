@@ -1,4 +1,4 @@
-var $songItem, checkUserVoted, countdown, currentTime, disableVoteButton, songFilter;
+var $songItem, countdown, currentTime, songFilter;
 
 window.pageName = 'list';
 
@@ -23,48 +23,6 @@ currentTime = Date.now();
 songFilter = function(filter) {
   $('.song-list').find(".song-string:not(:Contains(" + filter + "))").parents('li').hide();
   return $('.song-list').find(".song-string:contains(" + filter + ")").parents('li').show();
-};
-
-checkUserVoted = function(facebook_token) {
-  var voteStateCheckInterval;
-
-  return voteStateCheckInterval = setInterval(function() {
-    xx('check vote waiting');
-    if (window.appendFinish) {
-      clearInterval(voteStateCheckInterval);
-      return $.ajax({
-        type: 'post',
-        dataType: 'json',
-        cache: false,
-        data: {
-          facebook_token: facebook_token
-        },
-        url: '//api.iing.tw/check_user_voted.json',
-        success: function(response) {
-          var id, _i, _len, _ref, _results;
-
-          window.userVoted = response.data;
-          _ref = window.userVoted;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            id = _ref[_i];
-            _results.push(disableVoteButton(id));
-          }
-          return _results;
-        }
-      });
-    }
-  }, 100);
-};
-
-disableVoteButton = function(soundcloud_id) {
-  var button;
-
-  button = $('.song-item-' + soundcloud_id + ' .vote-button');
-  if (button.hasClass('done') === false) {
-    button.addClass('done');
-    return button.text('感謝支持！');
-  }
 };
 
 $songItem = function(item, display) {
@@ -107,15 +65,6 @@ $songItem = function(item, display) {
   </li>';
 };
 
-$(document).on('fbload', function() {
-  return FB.getLoginStatus(function(response) {
-    xx(response);
-    if (response.status === 'connected') {
-      return checkUserVoted(response.authResponse.accessToken);
-    }
-  });
-});
-
 $(function() {
   var appendStateCheckInterval, hash;
 
@@ -135,7 +84,7 @@ $(function() {
     window.hash = 'asc';
   }
   setLoadingTime();
-  $.getJSON('//api.iing.tw/soundclouds.json?token=8888&no_waveform=true', function(r) {
+  $.getJSON('/json/soundclouds.json', function(r) {
     var display, i, item, _i, _len, _ref, _results;
 
     xx('api done');

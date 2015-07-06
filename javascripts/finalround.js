@@ -64,7 +64,7 @@ $(function() {
     window.hash = 'ranking';
   }
   setLoadingTime();
-  $.getJSON('//api.iing.tw/soundclouds.json?token=8888&no_waveform=true', function(r) {
+  $.getJSON('/json/soundclouds.json', function(r) {
     var i, item, j, _i, _len, _ref, _results;
 
     xx('api done');

@@ -1,56 +1,8 @@
-var checkUserVoted, disableVoteButton;
-
 window.pageName = 'song';
 
 window.id = void 0;
 
 window.item = void 0;
-
-checkUserVoted = function(facebook_token) {
-  return $.ajax({
-    type: 'post',
-    dataType: 'json',
-    cache: false,
-    data: {
-      facebook_token: facebook_token
-    },
-    url: '//api.iing.tw/check_user_voted.json',
-    success: function(response) {
-      var id, _i, _len, _ref, _results;
-
-      _ref = response.data;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        id = _ref[_i];
-        if (id === window.id) {
-          _results.push(disableVoteButton());
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    }
-  });
-};
-
-disableVoteButton = function() {
-  var button;
-
-  button = $('.vote-button');
-  if (button.hasClass('done') === false) {
-    button.addClass('done');
-    return button.text('感謝支持！');
-  }
-};
-
-$(document).on('fbload', function() {
-  return FB.getLoginStatus(function(response) {
-    xx(response);
-    if (response.status === 'connected') {
-      return checkUserVoted(response.authResponse.accessToken);
-    }
-  });
-});
 
 $(function() {
   var explode, song_no, url;
