@@ -17,7 +17,7 @@ window.appendFinish = false;
 $songItem = function(i, item) {
   var num;
 
-  num = item.id;
+  num = padLeft(item.id, 3);
   return '<li class="song-item song-item-' + item.id + '" data-id="' + item.id + '" data-vote="' + item.vote_count + '">\
     <div class="song-content">\
       <a href="/song/' + item.id + '">\
