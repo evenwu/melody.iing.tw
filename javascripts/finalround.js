@@ -17,7 +17,7 @@ window.appendFinish = false;
 $songItem = function(i, item) {
   var num;
 
-  num = padLeft(item.id, 3);
+  num = item.id;
   return '<li class="song-item song-item-' + item.id + '" data-id="' + item.id + '" data-vote="' + item.vote_count + '">\
     <div class="song-content">\
       <a href="/song/' + item.id + '">\
@@ -64,13 +64,10 @@ $(function() {
     window.hash = 'ranking';
   }
   setLoadingTime();
-  $.getJSON('/json/soundclouds.json', function(r) {
+  $.getJSON('/json/soundclouds.finalround.json', function(r) {
     var i, item, j, _i, _len, _ref, _results;
 
     xx('api done');
-    r = r.slice().sort(function(a, b) {
-      return b.vote_count - a.vote_count;
-    });
     window.list = r;
     window.loading = true;
     $('.song-list').addClass('loading');
@@ -83,6 +80,9 @@ $(function() {
       if (item.winners) {
         $('.song-list').append($songItem(j, item));
         j++;
+        if (j === 10) {
+          $('.song-list').append('<p class="winners">以及三首由評審推薦入選的歌曲</p>');
+        }
       }
       i++;
       if (i === window.list.length) {
